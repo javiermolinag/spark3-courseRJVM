@@ -2,7 +2,7 @@ package dataframes
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{Row, SparkSession}
-import org.apache.spark.sql.types.{DoubleType, LongType, StringType, StructField, StructType}
+import org.apache.spark.sql.types.{DoubleType, IntegerType, LongType, StringType, StructField, StructType}
 
 object DataframeBasics extends App{
 
@@ -89,4 +89,31 @@ object DataframeBasics extends App{
     *   - print its schema
     *   - count the number of rows, call count()
     */
+
+  // Exercise 1 ...
+  val smartphones = Seq(
+    ("name_1","model_1","screen_dim_1",10),
+    ("name_2","model_2","screen_dim_2",12),
+    ("name_3","model_3","screen_dim_3",20),
+    ("name_4","model_4","screen_dim_4",15)
+  )
+  val smartphonesSchema = StructType(Array(
+    StructField("name",StringType,nullable = true),
+    StructField("model",StringType,nullable = true),
+    StructField("screen_dim",StringType,nullable = true),
+    StructField("megapixels",IntegerType,nullable = true)
+  ))
+  val smartphonesDF = smartphones.toDF("Make", "Model", "Platform", "CameraMegapixels")
+  smartphonesDF.show()
+  //val smartphonesDF = spark.createDataFrame(smartphones)
+
+
+
+  // Exercise 2 ...
+  val moviesDF = spark.read
+    .format("json")
+    .option("inferSchema", "true")
+    .load("src/main/resources/data/movies.json")
+  moviesDF.printSchema()
+  println(s"The Movies DF has ${moviesDF.count()} rows")
 }
