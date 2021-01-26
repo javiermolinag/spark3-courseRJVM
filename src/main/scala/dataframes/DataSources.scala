@@ -1,5 +1,6 @@
 package dataframes
 
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.apache.spark.sql.types.{DateType, DoubleType, LongType, StringType, StructField, StructType}
 
@@ -9,6 +10,9 @@ object DataSources extends App {
     .appName("Data Sources and Formats")
     .config("spark.master", "local")
     .getOrCreate()
+
+  val rootLogger = Logger.getRootLogger()
+  rootLogger.setLevel(Level.ERROR)
 
   val carsSchema = StructType(Array(
     StructField("Name", StringType),
