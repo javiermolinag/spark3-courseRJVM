@@ -82,4 +82,33 @@ object Datasets extends App {
   // also use the DF functions!
   carsDS.select(avg(col("Horsepower")))
 
+  // Joins
+  case class Guitar(id: Long, make: String, model: String, guitarType: String)
+  case class GuitarPlayer(id: Long, name: String, guitars: Seq[Long], band: Long)
+  case class Band(id: Long, name: String, hometown: String, year: Long)
+
+  val guitarsDS = readDF("guitars.json").as[Guitar]
+  val guitarPlayersDS = readDF("guitarPlayers.json").as[GuitarPlayer]
+  val bandsDS = readDF("bands.json").as[Band]
+
+  val guitarPlayerBandsDS: Dataset[(GuitarPlayer, Band)] = guitarPlayersDS.joinWith(bandsDS, guitarPlayersDS.col("band") === bandsDS.col("id"), "inner")
+
+  /**
+    * Exercise: join the guitarsDS and guitarPlayersDS, in an outer join
+    * (hint: use array_contains)
+    */
+
+  guitarPlayersDS
+    .joinWith(guitarsDS, array_contains(guitarPlayersDS.col("guitars"), guitarsDS.col("id")), "outer")
+    .show()
+
+  // Grouping DS
+
+  val carsGroupedByOrigin = carsDS
+    .groupByKey(_.Origin)
+    .count()
+    .show()
+
+  // joins and groups are WIDE transformations, will involve SHUFFLE operations
+
 }
