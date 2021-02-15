@@ -1,5 +1,6 @@
 package sparkSQL
 
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.apache.spark.sql.functions.col
 
@@ -9,8 +10,11 @@ object SparkSql extends App {
     .appName("Spark SQL Practice")
     .config("spark.master", "local")
     .config("spark.sql.warehouse.dir", "src/main/resources/warehouse")
-    .config("spark.sql.legacy.allowCreatingManagedTableUsingNonemptyLocation", "true")
+    //.config("spark.sql.legacy.allowCreatingManagedTableUsingNonemptyLocation", "true")
     .getOrCreate()
+
+  val rootLogger = Logger.getRootLogger()
+  rootLogger.setLevel(Level.ERROR)
 
   val carsDF = spark.read
     .option("inferSchema", "true")
@@ -94,7 +98,7 @@ object SparkSql extends App {
       |from employees
       |where hire_date > '1999-01-01' and hire_date < '2000-01-01'
     """.stripMargin
-  )
+  ).show()
 
   // 3
   spark.sql(
@@ -106,7 +110,7 @@ object SparkSql extends App {
       | and e.emp_no = s.emp_no
       |group by de.dept_no
     """.stripMargin
-  )
+  ).show()
 
   // 4
   spark.sql(
@@ -119,7 +123,8 @@ object SparkSql extends App {
       | and de.dept_no = d.dept_no
       |group by d.dept_name
       |order by payments desc
-      |limit 1
+      |limit 10
     """.stripMargin
   ).show()
+
 }
