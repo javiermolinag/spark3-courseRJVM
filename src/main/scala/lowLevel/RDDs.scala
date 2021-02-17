@@ -59,11 +59,11 @@ object RDDs extends App {
 
   // Transformations
 
-  // distinct
+  // counting
   val msftRDD = stocksRDD.filter(_.symbol == "MSFT") // lazy transformation
   val msCount = msftRDD.count() // eager ACTION
 
-  // counting
+  // distinct
   val companyNamesRDD = stocksRDD.map(_.symbol).distinct() // also lazy
 
   // min and max
@@ -120,9 +120,11 @@ object RDDs extends App {
 
   // 2
   val genresRDD = moviesRDD.map(_.genre).distinct()
+  genresRDD.foreach(println(_))
 
   // 3
   val goodDramasRDD = moviesRDD.filter(movie => movie.genre == "Drama" && movie.rating > 6)
+  goodDramasRDD.foreach(println(_))
 
   // 4
   case class GenreAvgRating(genre: String, rating: Double)
